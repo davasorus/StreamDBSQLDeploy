@@ -8,10 +8,12 @@ string fileName = "SQL2019-SSEI-Expr.exe";
 string machineName = Environment.MachineName;
 string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
 
+//creates directory for sql Server installer
 Directory.CreateDirectory(@"C:\temp\sqlsetup");
 
 logEntryWriter("downloading SQl Server Express 2019");
 
+//downloads SQL Server 2019 for install
 using (var client = new WebClient())
 {
     client.DownloadFile(url, fileName);
@@ -19,25 +21,28 @@ using (var client = new WebClient())
 
 logEntryWriter("download of SQl Server Express 2019 Complete");
 
+//moves sql server 2019 exe to install directory
 File.Move(fileName, Path.Combine(@"C:\temp\sqlsetup", fileName), true);
 
 logEntryWriter("attempting to install SQl Server Express 2019 Complete");
 
+//command prompt script to install SQL server 2019
 string cmdprompt = ""+Path.Combine(@"C:\temp\sqlsetup", fileName)+ @"/Q /SUPPRESSPRIVACYSTATEMENTNOTICE /IACCEPTSQLSERVERLICENSETERMS" +
 @"""/ACTION=""install""/ FEATURES = SQL, SSMS"+ " /INDICATEPROGRESS /INSTANCENAME=SQLEXPRESS/ SQLSVCACCOUNT = "
 + "" +userName + " /SQLSVCPASSWORD ="+ "P@ssW0rd" + "";
 
-
+//code that runs the above config
 cmdScriptRun(cmdprompt);
 
 logEntryWriter("install of SQl Server Express 2019 Complete");
 
-logEntryWriter(" account name: " + machineName + @"\" + userName);
+logEntryWriter(" account name: " + userName);
 
 logEntryWriter("Password: P@ssW0rd");
 
 logEntryWriter("Attempting to Deploy stream Data Base");
 
+//creates connection information to create db
 SqlConnection myConn = new SqlConnection("server="+ machineName+ @"\SQLEXPRESS;database=Master;integrated security=SSPI;");
 
 string str;
@@ -47,8 +52,11 @@ SqlCommand myCommand = new SqlCommand(str, myConn);
 try
 {
     myConn.Open();
+
     logEntryWriter("Connection open");
+
     myCommand.ExecuteNonQuery();
+
     logEntryWriter("DataBase is Created Successfully");
 }
 catch (System.Exception ex)
