@@ -10,7 +10,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="sqlScripts\CreateInsertUserMessage.sql" />
+    <None Remove="sqlScripts\CreateInsertUserName.sql" />
+    <None Remove="sqlScripts\CreateInsertUserNameandMessage.sql" />
+    <None Remove="sqlScripts\CreateUserInformation.sql" />
+    <None Remove="sqlScripts\CreateUserMessage.sql" />
+    <None Remove="sqlScripts\CreateUserNameandMessage.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="DinoLRResize1.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="sqlScripts\CreateInsertUserMessage.sql" />
+    <EmbeddedResource Include="sqlScripts\CreateInsertUserName.sql" />
+    <EmbeddedResource Include="sqlScripts\CreateInsertUserNameandMessage.sql" />
+    <EmbeddedResource Include="sqlScripts\CreateUserInformation.sql" />
+    <EmbeddedResource Include="sqlScripts\CreateUserMessage.sql" />
+    <EmbeddedResource Include="sqlScripts\CreateUserNameandMessage.sql" />
   </ItemGroup>
 
   <ItemGroup>
