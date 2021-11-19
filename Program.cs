@@ -3,36 +3,68 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Net;
 
-string url = "https://go.microsoft.com/fwlink/?linkid=866658";
-string fileName = "SQL2019-SSEI-Expr.exe";
+string url1 = "https://go.microsoft.com/fwlink/?linkid=866658";
+string url2 = "https://aka.ms/ssmsfullsetup";
+string fileName1 = "SQL2019-SSEI-Expr.exe";
+string fileName2 = "SSMS-Setup-ENU.exe";
+string fileName3 = "SETUP.EXE";
 string machineName = Environment.MachineName;
 string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+
+//location of SQl Server 2019 installer
+string sqlCmd1 = Path.Combine(@"C:\Temp\sqlsetup\SQLEXPR_2019", fileName3);
+string sqlCmd2 = Path.Combine(@"C:\temp\sqlsetup", fileName2);
+
+//config of sql server 2019
+string sqlCmdScript1 = @" /Q /ACTION=""Install"" /ROLE=""AllFeatures_WithDefaults"" /IACCEPTROPENLICENSETERMS=""True"" /SUPPRESSPRIVACYSTATEMENTNOTICE=""True"" /ENU=""True""" +
+    @" /QUIETSIMPLE=""False"" /USEMICROSOFTUPDATE=""True"" /SUPPRESSPAIDEDITIONNOTICE=""True"" /FEATURES=SQL /INDICATEPROGRESS=""True"" " +
+    @" /INSTANCENAME=""SQLEXPRESS"" /INSTALLSHAREDDIR=""C:\Program Files\Microsoft SQL Server"" /INSTANCEID=""SQLEXPRESS"" /FILESTREAMLEVEL=""3"" /ADDCURRENTUSERASSQLADMIN=""True""" +
+    @" /BROWSERSVCSTARTUPTYPE=""Automatic"" /IACCEPTSQLSERVERLICENSETERMS=""True"" /SQLTELSVCACCT=""NT AUTHORITY\NETWORK SERVICE"" /SQLTEMPDBLOGFILESIZE=""8"" " +
+    @" /SQLSVCACCOUNT=""NT AUTHORITY\NETWORK SERVICE"" /SQLTEMPDBFILECOUNT=""1"" /SQLTEMPDBFILESIZE=""8"" /SQLTEMPDBFILEGROWTH=""64"" /SQLTEMPDBLOGFILEGROWTH=""64"" /FILESTREAMSHARENAME=""FILESTREAMSHARE"" ";
+
+string sqlCmdScript2 = @"/install /quiet /restart";
 
 //creates directory for sql Server installer
 Directory.CreateDirectory(@"C:\temp\sqlsetup");
 
-logEntryWriter("downloading SQl Server Express 2019");
+logEntryWriter("downloading SQl Server 2019");
 
 //downloads SQL Server 2019 for install
 using (var client = new WebClient())
 {
-    client.DownloadFile(url, fileName);
+    client.DownloadFile(url1, fileName1);
+    client.DownloadFile(url2, fileName2);
 }
 
-logEntryWriter("download of SQl Server Express 2019 Complete");
+logEntryWriter("download of SQl Server 2019 is complete");
 
 //moves sql server 2019 exe to install directory
-File.Move(fileName, Path.Combine(@"C:\temp\sqlsetup", fileName), true);
+File.Move(fileName1, Path.Combine(@"C:\temp\sqlsetup\", fileName1), true);
+File.Move(fileName2, Path.Combine(@"C:\temp\sqlsetup\", fileName2), true);
 
-logEntryWriter("attempting to install SQl Server Express 2019 Complete");
+logEntryWriter("Extracting install files");
 
-//command prompt script to install SQL server 2019
-string cmdprompt = ""+Path.Combine(@"C:\temp\sqlsetup", fileName)+ @"/Q /SUPPRESSPRIVACYSTATEMENTNOTICE /IACCEPTSQLSERVERLICENSETERMS" +
-@"""/ACTION=""install""/ FEATURES = SQL, SSMS"+ " /INDICATEPROGRESS /INSTANCENAME=SQLEXPRESS/ SQLSVCACCOUNT = "
-+ "" +userName + " /SQLSVCPASSWORD ="+ "P@ssW0rd" + "";
+Process.Start("CMD.exe", @"/c C:\temp\sqlsetup\SQL2019-SSEI-Expr.exe /ACTION=Download MEDIAPATH=C:\temp\sqlsetup /MEDIATYPE=Core /QUIET");
 
-//code that runs the above config
-cmdScriptRun(cmdprompt);
+Thread.Sleep(100000);
+
+Process.Start("CMD.exe", @"/C C:\temp\sqlsetup\SQLEXPR_x64_ENU.exe /q /x:C:\temp\sqlsetup\SQLEXPR_2019");
+
+Thread.Sleep(10000);
+
+logEntryWriter("attempting to install SQl Server 2019");
+
+scriptRun(sqlCmdScript1, sqlCmd1);
+
+//code that does the installing of SQL Server
+//Task task3 = Task.Factory.StartNew(() => scriptRun(sqlCmdScript1, sqlCmd1));
+
+scriptRun(sqlCmdScript2, sqlCmd2);
+
+//code that does the installing of SSMS
+//Task task4 = Task.Factory.StartNew(() => scriptRun(sqlCmdScript2 , sqlCmd2));
+
+//Task.WaitAll(task3, task4);
 
 logEntryWriter("install of SQl Server Express 2019 Complete");
 
@@ -43,7 +75,7 @@ logEntryWriter("Password: P@ssW0rd");
 logEntryWriter("Attempting to Deploy stream Data Base");
 
 //creates connection information to create db
-SqlConnection myConn = new SqlConnection("server="+ machineName+ @"\SQLEXPRESS;database=Master;integrated security=SSPI;");
+SqlConnection myConn = new SqlConnection("server=" + machineName + @"\SQLEXPRESS;database=Master;integrated security=SSPI;");
 
 string str;
 str = "CREATE DATABASE STREAMINGDB";
@@ -71,14 +103,15 @@ finally
     }
 }
 
-//this will run command prompt scripts within the application.
-void cmdScriptRun(string Command)
+Process.Start("CMD>exe", "Restart /r");
+
+void scriptRun(string Command, string fileName)
 {
     Process process = new Process();
     ProcessStartInfo startInfo = new ProcessStartInfo
     {
         WindowStyle = ProcessWindowStyle.Hidden,
-        FileName = "cmd.exe",
+        FileName = fileName,
         Arguments = Command
     };
     process.StartInfo = startInfo;
