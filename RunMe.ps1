@@ -3,3 +3,11 @@
  Start-Process -Wait -FilePath ‘C:\Temp\windowsdesktop-runtime-6.0.0-win-x64.exe’ -ArgumentList ‘/install /quiet’
 
  Start-Process -Wait -FilePath ‘StreamDBSQLDeploy.exe’
+
+ $wsh = New-Object -ComObject Wscript.Shell
+
+$wsh.Popup("Computer Must Restart to finish. Once this is done your Database is deployed and ready for use")
+
+Start-Sleep -Seconds 5
+
+ Restart-Computer
