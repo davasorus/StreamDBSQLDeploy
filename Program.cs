@@ -5,12 +5,16 @@ using System.Net;
 using System.Reflection;
 
 #region variables
-
+//download URLs for sql server and SSMS
 string url1 = "https://go.microsoft.com/fwlink/?linkid=866658";
 string url2 = "https://aka.ms/ssmsfullsetup";
+
+//file names required to download/extract/interact with SQL Server 2019 and SSMS
 string fileName1 = "SQL2019-SSEI-Expr.exe";
 string fileName2 = "SSMS-Setup-ENU.exe";
 string fileName3 = "SETUP.EXE";
+
+//Meta information required to configure sql server and SSMS login information
 string machineName = Environment.MachineName;
 string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
 
@@ -19,7 +23,7 @@ SqlConnection myConn = new SqlConnection("server=" + machineName + @"\SQLEXPRESS
 string str;
 str = "CREATE DATABASE STREAMINGDB";
 
-//location of SQl Server 2019 installer
+//location of SQl Server 2019 and SSMS installer
 string sqlCmd1 = Path.Combine(@"C:\Temp\sqlsetup\SQLEXPR_2019", fileName3);
 string sqlCmd2 = Path.Combine(@"C:\temp\sqlsetup", fileName2);
 
@@ -33,16 +37,42 @@ string sqlCmdScript1 = @" /Q /ACTION=""Install"" /ROLE=""AllFeatures_WithDefault
 //config of SSMS
 string sqlCmdScript2 = @"/install /quiet /restart";
 
+string logFile = "sqlDeployLogFile.txt";
+
+#endregion
+
+#region Entry
+
+//starts the logfile
+string LogEntry = @"----------- Start of log file" + " " + DateTime.Now + "-----------";
+
+//creates file if it doesn't exist
+//if it does already exist the log file is updated
+if (File.Exists(logFile))
+{
+    using (StreamWriter file = new StreamWriter((logFile), true))
+    {
+        file.WriteLine(LogEntry);
+    }
+}
+else
+{
+    using (StreamWriter file = new StreamWriter((logFile), true))
+    {
+        file.WriteLine(LogEntry);
+    }
+}
+
 #endregion
 
 #region file related move/download/extracting
 
 //creates directory for sql Server installer
-Directory.CreateDirectory(@"C:\temp\sqlsetup");
+createDir(@"C:\temp\sqlsetup");
 
 logEntryWriter("downloading SQl Server 2019");
 
-//downloads SQL Server 2019 for install
+//downloads SQL Server 2019 and SSMS for install
 using (var client = new WebClient())
 {
     client.DownloadFile(url1, fileName1);
@@ -52,20 +82,16 @@ using (var client = new WebClient())
 logEntryWriter("download of SQl Server 2019 is complete");
 
 //moves sql server 2019 exe to install directory
-File.Move(fileName1, Path.Combine(@"C:\temp\sqlsetup\", fileName1), true);
-File.Move(fileName2, Path.Combine(@"C:\temp\sqlsetup\", fileName2), true);
+fileMover(fileName1, Path.Combine(@"C:\temp\sqlsetup\", fileName1));
+fileMover(fileName2, Path.Combine(@"C:\temp\sqlsetup\", fileName2));
 
 logEntryWriter("Extracting install files");
 
 embeddedResourceWork();
 
-Process.Start("CMD.exe", @"/c C:\temp\sqlsetup\SQL2019-SSEI-Expr.exe /ACTION=Download MEDIAPATH=C:\temp\sqlsetup /MEDIATYPE=Core /QUIET");
+scriptRun(@"/c C:\temp\sqlsetup\SQL2019-SSEI-Expr.exe /ACTION=Download MEDIAPATH=C:\temp\sqlsetup /MEDIATYPE=Core /QUIET", "CMD.exe");
 
-Thread.Sleep(100000);
-
-Process.Start("CMD.exe", @"/C C:\temp\sqlsetup\SQLEXPR_x64_ENU.exe /q /x:C:\temp\sqlsetup\SQLEXPR_2019");
-
-Thread.Sleep(10000);
+scriptRun(@"/C C:\temp\sqlsetup\SQLEXPR_x64_ENU.exe /q /x:C:\temp\sqlsetup\SQLEXPR_2019", "CMD.exe");
 
 logEntryWriter("attempting to install SQl Server 2019");
 
@@ -103,9 +129,9 @@ try
 
     logEntryWriter("DataBase is Created Successfully");
 }
-catch (System.Exception ex)
+catch (Exception ex)
 {
-    Console.WriteLine(ex.ToString());
+    logEntryWriter(ex.Message);
 }
 finally
 {
@@ -131,16 +157,23 @@ deploymentScriptRun(@"C:\Temp\sqlsetup\Scripts\CreateInsertUserNameandMessage.sq
 //used to run file with the arguments of command
 void scriptRun(string Command, string fileName)
 {
-    Process process = new Process();
-    ProcessStartInfo startInfo = new ProcessStartInfo
+    try
     {
-        WindowStyle = ProcessWindowStyle.Hidden,
-        FileName = fileName,
-        Arguments = Command
-    };
-    process.StartInfo = startInfo;
-    process.Start();
-    process.WaitForExit();
+        Process process = new Process();
+        ProcessStartInfo startInfo = new ProcessStartInfo
+        {
+            WindowStyle = ProcessWindowStyle.Hidden,
+            FileName = fileName,
+            Arguments = Command
+        };
+        process.StartInfo = startInfo;
+        process.Start();
+        process.WaitForExit();
+    }
+    catch(Exception ex)
+    {
+        logEntryWriter(ex.Message);
+    }
 }
 
 //code that executes sql db deployment sql scripts
@@ -159,6 +192,8 @@ void deploymentScriptRun(string fileName)
     {
         SqlCommand cmd = new SqlCommand(script, conn);
         cmd.ExecuteNonQuery();
+
+        logEntryWriter(fileName + " ran");
     }
     catch (Exception ex)
     {
@@ -191,50 +226,33 @@ void embeddedResourceWork()
             scriptLabel(strPath, FullPath);
         }
     }
-    catch
-    {
-        logEntryWriter("Error accessing resources!");
-    }
-}
-
-//creates directories if needed
-void createDir(string folder)
-{
-    try
-    {
-        if (Directory.Exists(folder))
-        {
-            //nothing
-        }
-        else
-        {
-            DirectoryInfo di = Directory.CreateDirectory(folder);
-
-            string logEntry = DateTime.Now + " " + folder + " was created.";
-            logEntryWriter(logEntry);
-        }
-    }
     catch (Exception ex)
     {
-        string logEntry = DateTime.Now + " " + ex.ToString();
-
-        logEntryWriter(logEntry);
+        logEntryWriter("Error accessing resources!");
+        logEntryWriter(ex.Message);
     }
 }
 
 //this creates the resources from the application to a specified location
 void writeResourceToFile(string resourceName, string fileName)
 {
-    using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+    try
     {
-        using (var file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+        using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
         {
-            resource.CopyTo(file);
-            file.Close();
+            using (var file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            {
+                resource.CopyTo(file);
+                file.Close();
 
-            string logEntry = DateTime.Now + " " + file + " successfully extracted.";
-            logEntryWriter(logEntry);
+                string logEntry = file + " successfully extracted.";
+                logEntryWriter(logEntry);
+            }
         }
+    }
+    catch(Exception ex)
+    {
+        logEntryWriter(ex.Message);
     }
 }
 
@@ -276,9 +294,7 @@ void scriptLabel(string strPath, string fullPath)
         }
         catch (Exception ex)
         {
-            string logEntry = DateTime.Now + " " + ex.ToString();
-
-            logEntryWriter(logEntry);
+            logEntryWriter(ex.Message);
         }
     }
     else
@@ -286,12 +302,54 @@ void scriptLabel(string strPath, string fullPath)
     }
 }
 
-//This will write to a log file to keep between runs
+//creates directories if needed
+void createDir(string folder)
+{
+    try
+    {
+        if (Directory.Exists(folder))
+        {
+            //nothing
+        }
+        else
+        {
+            DirectoryInfo di = Directory.CreateDirectory(folder);
+
+            logEntryWriter( folder +" was created.");
+        }
+    }
+    catch (Exception ex)
+    {
+        logEntryWriter(ex.ToString());
+    }
+}
+
+//moves files from one location to another
+void fileMover(string oldPath, string newPath)
+{
+    try
+    {
+        File.Move(oldPath, newPath, true);
+
+        logEntryWriter(oldPath + " moved to " + newPath);
+    }
+    catch (Exception ex)
+    {
+        logEntryWriter(ex.Message);
+    }
+}
+
+//This will write to the console
 void logEntryWriter(string LogEntry)
 {
     try
     {
-        Console.WriteLine(LogEntry);
+        Console.WriteLine(DateTime.Now + " " + LogEntry);
+
+        using (TextWriter text_writer = new StreamWriter((logFile), true))
+        {
+            text_writer.WriteLine(DateTime.Now + " " + LogEntry);
+        }
     }
     catch (Exception e)
     {
