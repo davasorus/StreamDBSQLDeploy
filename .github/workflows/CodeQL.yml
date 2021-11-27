@@ -26,13 +26,7 @@ jobs:
     steps:
      - name: Checkout repository
        uses: actions/checkout@v2.4.0
-      
-       # Initializes the CodeQL tools for scanning.
-     - name: initialize Code QL
-       uses: github/codeql-action/init@v1
-       with:
-        languages: ${{ matrix.language }}
-     
+       
      - run: |
           name: Checkout repository
           uses: actions/checkout@v2.4.0
@@ -44,7 +38,14 @@ jobs:
           run: dotnet restore
           name: Build
           run: dotnet build --no-restore
-
+      
+       # Initializes the CodeQL tools for scanning.
+     - name: initialize Code QL
+       uses: github/codeql-action/init@v1
+       with:
+        languages: ${{ matrix.language }}
+     
+     
      - name: Perform CodeQL Analysis
        uses: github/codeql-action/analyze@v1
    
