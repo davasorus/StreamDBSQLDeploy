@@ -33,12 +33,7 @@ jobs:
         languages: ${{ matrix.language }}
         
      - run: |
-              actions/setup-dotnet@v1
-              with:
-                dotnet-version: 6.0.x
-              
               dotnet restore
-              
               dotnet build --no-restore
              
      
