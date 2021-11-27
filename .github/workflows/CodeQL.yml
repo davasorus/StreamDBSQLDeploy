@@ -33,8 +33,7 @@ jobs:
         languages: ${{ matrix.language }}
         
      - run: |
-     
-          - name: Build
+            name: Build
             run: dotnet build
      
      
