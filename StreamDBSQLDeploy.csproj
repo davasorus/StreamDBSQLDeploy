@@ -16,6 +16,7 @@
     <PackageTags>DotNet; SQL Server; Deploy;</PackageTags>
     <Copyright>Davasorus 2021</Copyright>
     <Description>Application Designed to Deploy SQL Server to import stream text from StreamLabs OBS Chatbot</Description>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

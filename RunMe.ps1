@@ -21,6 +21,7 @@ $Shortcut = $WScriptShell.CreateShortcut($ShortcutFile)
 $Shortcut.TargetPath = $TargetFile
 $Shortcut.Save()
 
+
 $wsh = New-Object -ComObject Wscript.Shell
 
 $wsh.Popup("Computer Must Restart to finish. Once this is done your Database is deployed and ready for use")
