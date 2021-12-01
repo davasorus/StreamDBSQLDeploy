@@ -7,6 +7,19 @@
     <Nullable>enable</Nullable>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>DinoLRResize1.ico</ApplicationIcon>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <SignAssembly>False</SignAssembly>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <NeutralLanguage>en</NeutralLanguage>
+    <FileVersion>1.21.12.2</FileVersion>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <PackageTags>DotNet; SQL Server; Deploy;</PackageTags>
+    <Copyright>Davasorus 2021</Copyright>
+    <Description>Application Designed to Deploy SQL Server to import stream text from StreamLabs OBS Chatbot</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>True</Optimize>
   </PropertyGroup>
 
   <ItemGroup>
@@ -50,6 +63,21 @@
     </PackageReference>
     <PackageReference Include="Syroot.Windows.IO.KnownFolders" Version="1.2.3" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
