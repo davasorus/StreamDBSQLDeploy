@@ -12,6 +12,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <NeutralLanguage>en</NeutralLanguage>
     <LangVersion>10.0</LangVersion>
+	<AssemblyVersion>1.22.7.3</AssemblyVersion>
     <FileVersion>$(AssemblyVersion)</FileVersion>
 	<Version>$(AssemblyVersion)</Version>
 	<PlatformTarget>x64</PlatformTarget>
@@ -20,7 +21,6 @@
     <Copyright>Davasorus 2021</Copyright>
     <Description>Application Designed to Deploy SQL Server to import stream text from StreamLabs OBS Chatbot</Description>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <AssemblyVersion>1.22.7.2</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
