@@ -29,4 +29,4 @@ $wsh.Popup("Computer Must Restart to finish. Once this is done your Database is 
       
 Start-Sleep -Seconds 5
 
- #Restart-Computer
+ Restart-Computer
