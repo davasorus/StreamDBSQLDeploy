@@ -89,9 +89,9 @@ logEntryWriter("Extracting install files");
 
 embeddedResourceWork();
 
-scriptRun(@"/c C:\temp\sqlsetup\SQL2019-SSEI-Expr.exe /ACTION=Download MEDIAPATH=C:\temp\sqlsetup /MEDIATYPE=Core /QUIET", "CMD.exe");
+scriptRun(@"/c C:\temp\sqlsetup\SQL2019-SSEI-Dev.exe /ACTION=Download MEDIAPATH=C:\temp\sqlsetup /MEDIATYPE=Core /QUIET", "CMD.exe");
 
-scriptRun(@"/C C:\temp\sqlsetup\SQLEXPR_x64_ENU.exe /q /x:C:\temp\sqlsetup\SQLEXPR_2019", "CMD.exe");
+scriptRun(@"/C C:\temp\sqlsetup\SQL2019-SSEI-Dev.exe /q /x:C:\temp\sqlsetup\SQLEXPR_2019", "CMD.exe");
 
 logEntryWriter("attempting to install SQl Server 2019");
 
