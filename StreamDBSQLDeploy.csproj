@@ -11,13 +11,14 @@
     <SignAssembly>False</SignAssembly>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <NeutralLanguage>en</NeutralLanguage>
-    <FileVersion>1.22.7.1</FileVersion>
+	<AssemblyVersion>2.22.7.1</AssemblyVersion>
+    <FileVersion>$(AssemblyVersion)</FileVersion>
+	<Version>$(AssemblyVersion)</Version>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <PackageTags>DotNet; SQL Server; Deploy;</PackageTags>
     <Copyright>Davasorus 2021</Copyright>
     <Description>Application Designed to Deploy SQL Server to import stream text from StreamLabs OBS Chatbot</Description>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <AssemblyVersion>1.22.7.1</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
