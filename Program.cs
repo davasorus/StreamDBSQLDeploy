@@ -10,7 +10,7 @@ string url1 = "https://go.microsoft.com/fwlink/p/?linkid=866662";
 string url2 = "https://aka.ms/ssmsfullsetup";
 
 //file names required to download/extract/interact with SQL Server 2019 and SSMS
-string fileName1 = "SQL2019-SSEI-Dev.exe";
+string fileName1 = "SQL2019-SSEI-Expr.exe";
 string fileName2 = "SSMS-Setup-ENU.exe";
 string fileName3 = "SETUP.EXE";
 
