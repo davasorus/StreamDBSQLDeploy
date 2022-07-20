@@ -6,7 +6,7 @@ using System.Reflection;
 
 #region variables
 //download URLs for sql server and SSMS
-string url1 = "https://go.microsoft.com/fwlink/p/?linkid=866662";
+string url1 = "https://go.microsoft.com/fwlink/?linkid=866658";
 string url2 = "https://aka.ms/ssmsfullsetup";
 
 //file names required to download/extract/interact with SQL Server 2019 and SSMS
@@ -29,7 +29,7 @@ string sqlCmd2 = Path.Combine(@"C:\temp\sqlsetup", fileName2);
 
 //config of sql server 2019
 string sqlCmdScript1 = @" /Q /ACTION=""Install"" /ROLE=""AllFeatures_WithDefaults"" /IACCEPTROPENLICENSETERMS=""True"" /SUPPRESSPRIVACYSTATEMENTNOTICE=""True"" /ENU=""True""" +
-    @" /QUIETSIMPLE=""False"" /USEMICROSOFTUPDATE=""True"" /SUPPRESSPAIDEDITIONNOTICE=""True"" /FEATURES=SQL,FullText,Tools /INDICATEPROGRESS=""True"" " +
+    @" /QUIETSIMPLE=""False"" /USEMICROSOFTUPDATE=""True"" /SUPPRESSPAIDEDITIONNOTICE=""True"" /FEATURES=SQL /INDICATEPROGRESS=""True"" " +
     @" /INSTANCENAME=""SQLEXPRESS"" /INSTALLSHAREDDIR=""C:\Program Files\Microsoft SQL Server"" /INSTANCEID=""SQLEXPRESS"" /FILESTREAMLEVEL=""3"" /ADDCURRENTUSERASSQLADMIN=""True""" +
     @" /BROWSERSVCSTARTUPTYPE=""Automatic"" /IACCEPTSQLSERVERLICENSETERMS=""True"" /SQLTELSVCACCT=""NT AUTHORITY\NETWORK SERVICE"" /SQLTEMPDBLOGFILESIZE=""8"" " +
     @" /SQLSVCACCOUNT=""NT AUTHORITY\NETWORK SERVICE"" /SQLTEMPDBFILECOUNT=""1"" /SQLTEMPDBFILESIZE=""8"" /SQLTEMPDBFILEGROWTH=""64"" /SQLTEMPDBLOGFILEGROWTH=""64"" /FILESTREAMSHARENAME=""FILESTREAMSHARE"" ";
@@ -170,7 +170,7 @@ void scriptRun(string Command, string fileName)
         process.Start();
         process.WaitForExit();
     }
-    catch(Exception ex)
+    catch (Exception ex)
     {
         logEntryWriter(ex.Message);
     }
@@ -250,7 +250,7 @@ void writeResourceToFile(string resourceName, string fileName)
             }
         }
     }
-    catch(Exception ex)
+    catch (Exception ex)
     {
         logEntryWriter(ex.Message);
     }
@@ -315,7 +315,7 @@ void createDir(string folder)
         {
             DirectoryInfo di = Directory.CreateDirectory(folder);
 
-            logEntryWriter( folder +" was created.");
+            logEntryWriter(folder + " was created.");
         }
     }
     catch (Exception ex)
