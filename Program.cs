@@ -12,7 +12,7 @@ string url2 = "https://aka.ms/ssmsfullsetup";
 //file names required to download/extract/interact with SQL Server 2019 and SSMS
 string fileName1 = "SQL2019-SSEI-Dev.exe";
 string fileName2 = "SSMS-Setup-ENU.exe";
-string fileName3 = "SETUP.EXE";
+string fileName3 = "SQLServer2019-DEV-x64-ENU.exe";
 
 //Meta information required to configure sql server and SSMS login information
 string machineName = Environment.MachineName;
@@ -329,7 +329,7 @@ void fileMover(string oldPath, string newPath)
 {
     try
     {
-        File.Move(oldPath, newPath, true);
+        File.Move(oldPath, newPath);
 
         logEntryWriter(oldPath + " moved to " + newPath);
     }
