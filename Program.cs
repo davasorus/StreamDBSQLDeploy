@@ -329,7 +329,7 @@ void fileMover(string oldPath, string newPath)
 {
     try
     {
-        File.Move(oldPath, newPath, true);
+        File.Move(oldPath, newPath);
 
         logEntryWriter(oldPath + " moved to " + newPath);
     }
