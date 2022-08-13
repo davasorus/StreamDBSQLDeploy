@@ -31,7 +31,7 @@ jobs:
         
         # restore the .sln of your project
       - name: restore NuGet packages
-        run: nuget restore 'StreamDBSQLDeploy.sln
+        run: nuget restore 'StreamDBSQLDeploy.sln'
         
         # build the .sln of your project
       - name: Build Application
